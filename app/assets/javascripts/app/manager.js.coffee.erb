@@ -1,0 +1,53 @@
+class ConnectedDisplay
+  constructor: (@id, @manager) ->
+
+  message: (obj) =>
+    @manager.sendToDisplay(@id, obj)
+
+  showText: (text) =>
+    @message(action: 'text', text: text)
+
+  identify: (index) =>
+    @message(action: 'identify', index: index)
+
+  countdown: (text) =>
+    @message(action: 'countdown', text: text)
+
+  reload: =>
+    @message(action: 'reload')
+
+  reset: =>
+    @message(action: 'reset')
+
+class Manager
+  BROADCAST_ID = -1
+
+  constructor: ->
+    @manager = io.connect(<%= File.join(SOCKET_SERVER_URL, 'management').to_json %>)
+
+    @displays = {}
+
+    @manager.on 'monitor_connection', @onMonitorConnect
+    @manager.on 'monitor_disconnection', @onMonitorDisconnect
+
+  broadcast: (obj) =>
+    @manager.emit('command', id: BROADCAST_ID, data: obj)
+
+  sendToDisplay: (id, obj) =>
+    @manager.emit('command', id: id, data: obj)
+
+  onMonitorConnect: (id) =>
+    display = new ConnectedDisplay(id, @)
+    @displays[id] = display
+    display.message('mgmt ack. display id ' + id)
+    @trigger('displayConnected', display)
+
+  onMonitorDisconnect: (id) =>
+    display = @displays[id]
+    return unless display
+    delete @displays[id]
+    @trigger('displayDisconnected', display)
+
+window.asEvented.call(Manager.prototype)
+
+window.Manager = Manager

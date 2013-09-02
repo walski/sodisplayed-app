@@ -1,0 +1,58 @@
+class Display
+  BROADCAST_ID = -1
+
+  constructor: ->
+    @display = io.connect(<%= File.join(SOCKET_SERVER_URL, 'monitor').to_json %>)
+
+    @display.on 'monitor_id', (@id) =>
+
+    @display.on 'command', ({id, data}) =>
+      return if id isnt @id and !@isBroadcast(id)
+
+      return if (typeof data) isnt 'object'
+
+      console.log("Command", data.action, data)
+
+      switch data.action
+        when "identify" then @identify(data.index)
+        when "text" then @showText(data.text)
+        when "countdown" then @countdown(data.text)
+        when "prepareCountdown" then @prepareCountdown()
+        when "reset" then @reset()
+        when "reload" then @reload()
+
+    $ ->
+      $('#text').css(width: $(window).width(), height: $(window).height())
+
+  reset: =>
+    $('#display').removeClass()
+
+  showText: (text) =>
+    @reset()
+    $('#text').text(text).fitText(0.173)
+    $('#display').addClass('text')
+
+  prepareCountdown: =>
+    @reset()
+    $('#display').addClass('countdown')
+
+  countdown: (text) =>
+    text = $("<p></p>").text(text)
+    $('#countdown').empty().append(text)
+    text.fitText(0.173)
+
+  identify: (index) =>
+    @reset()
+    $('#identifier').text(index)
+    $('#display').addClass('identify').css('font-size', "#{$(window).height()}px")
+    setTimeout(->
+      $('#display').removeClass('identify')
+    , 3000)
+
+  reload: =>
+    window.location.reload()
+
+  isBroadcast: (id) =>
+    id is BROADCAST_ID
+
+window.Display = Display

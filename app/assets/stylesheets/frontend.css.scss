@@ -1,0 +1,74 @@
+// Place all the styles related to the frontend controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "twitter/bootstrap";
+
+@-webkit-keyframes countdown {
+  0% {
+    opacity:0.0;
+  }
+
+  60% {
+    opacity:1.0;
+  }
+
+  100% {
+    opacity:0.0;
+  }
+}
+
+#display {
+  #identifier {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: red;
+    color: white;
+    display: none;
+  }
+
+  &.identify #identifier {
+    display: block;
+  }
+
+  #countdown {
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: #000;
+    color: #fb0074;
+
+    p {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      -webkit-animation: countdown 1.3s 1 ease-in-out;
+
+      &:last-child {
+        -webkit-animation-duration: 2s;
+      };
+    }
+  }
+
+  &.countdown #countdown {
+    visibility: visible;
+  }
+
+  #text {
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: #fb0074;
+    color: white;
+  }
+
+  &.text #text {
+    visibility: visible;
+  }
+}
