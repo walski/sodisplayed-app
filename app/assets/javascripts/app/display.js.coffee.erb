@@ -2,7 +2,7 @@ class Display
   BROADCAST_ID = -1
 
   constructor: ->
-    @display = io.connect(<%= File.join(SOCKET_SERVER_URL, 'monitor').to_json %>)
+    @display = io.connect(window.env.SOCKET_SERVER_URL + '/monitor')
 
     @display.on 'monitor_id', (@id) =>
 
@@ -16,6 +16,7 @@ class Display
       switch data.action
         when "identify" then @identify(data.index)
         when "text" then @showText(data.text)
+        when "blink" then @blink()
         when "countdown" then @countdown(data.text)
         when "prepareCountdown" then @prepareCountdown()
         when "reset" then @reset()
@@ -35,6 +36,10 @@ class Display
   prepareCountdown: =>
     @reset()
     $('#display').addClass('countdown')
+
+  blink: =>
+    $('#text').removeClass('blink')
+    setTimeout((-> $('#text').addClass('blink')), 1)
 
   countdown: (text) =>
     text = $("<p></p>").text(text)

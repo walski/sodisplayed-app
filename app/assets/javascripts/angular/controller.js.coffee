@@ -41,26 +41,34 @@
       $scope.displays[display].showText(text)
       display += 1
 
+  $scope.blink = ->
+    $scope.manager.broadcast(action: 'blink')
+
   $scope.countdown = ->
     $scope.countDownRunning = true
 
     $scope.manager.broadcast(action: 'prepareCountdown')
 
-    counts = [3,2,1]
-    lastWord = "GO"
-    lastWord += "!" while lastWord.length < $scope.displays.length
+
+    counts = [3,2,1, '❤']
+    countCount = counts.length
+
+    lastWord = "So Coded"
 
     shortTimeout = 800
     longTimeout = 1500
 
+    dots = ['.', '.', '.', '❤']
+
     chainCountdown = (displayIndex) ->
       display = $scope.displays[displayIndex]
       lastDisplay = displayIndex is $scope.displays.length - 1
-      display.countdown(if lastDisplay then counts.shift() else '.')
+      display.countdown(if lastDisplay then counts.shift() else dots[countCount - counts.length])
       if counts.length < 1
         $scope.countDownRunning = false
         setTimeout(->
           $scope.showText(lastWord)
+          $scope.blink()
         , longTimeout * 2)
         return
 

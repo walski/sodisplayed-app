@@ -10,6 +10,9 @@ class ConnectedDisplay
   identify: (index) =>
     @message(action: 'identify', index: index)
 
+  blink: () =>
+    @message(action: 'blink')
+
   countdown: (text) =>
     @message(action: 'countdown', text: text)
 
@@ -23,7 +26,7 @@ class Manager
   BROADCAST_ID = -1
 
   constructor: ->
-    @manager = io.connect(<%= File.join(SOCKET_SERVER_URL, 'management').to_json %>)
+    @manager = io.connect(window.env.SOCKET_SERVER_URL + '/management')
 
     @displays = {}
 

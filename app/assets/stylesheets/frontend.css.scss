@@ -18,6 +18,18 @@
   }
 }
 
+@-webkit-keyframes blink {
+  0% {
+    background: #000;
+    color: #fb0074;
+  }
+
+  100% {
+    background: #fb0074;
+    color: #fff;
+  }
+}
+
 #display {
   #identifier {
     position: absolute;
@@ -64,8 +76,12 @@
     width: 100%;
     height: 100%;
     text-align: center;
-    background: #fb0074;
-    color: white;
+    background: #000;
+    color: #fb0074;
+
+    &.blink {
+      -webkit-animation: blink 0.2s 10;
+    }
   }
 
   &.text #text {
